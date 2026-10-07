@@ -7,6 +7,7 @@ import Column from 'primevue/column'
 const formData = ref({
   username: '',
   password: '',
+  confirmPassword: '',
   isAustralian: false,
   reason: '',
   gender: ''
@@ -17,6 +18,7 @@ const submittedCards = ref([])
 const errors = ref({
   username: null,
   password: null,
+  confirmPassword: null,
   resident: null,
   gender: null,
   reason: null
@@ -73,6 +75,17 @@ const validatePassword = (blur) => {
   }
 }
 
+// Confirm password validation
+const validateConfirmPassword = (blur) => {
+  if (formData.value.password !== formData.value.confirmPassword) {
+    if (blur) {
+      errors.value.confirmPassword = 'Passwords do not match.'
+    }
+  } else {
+    errors.value.confirmPassword = null
+  }
+}
+
 // Australian Resident validation
 const validateResident = () => {
   if (!formData.value.isAustralian) {
@@ -108,6 +121,7 @@ const validateReason = (blur) => {
 const submitForm = () => {
   validateName(true)
   validatePassword(true)
+  validateConfirmPassword(true)
   validateResident()
   validateGender()
   validateReason(true)
@@ -115,6 +129,7 @@ const submitForm = () => {
   if (
     !errors.value.username &&
     !errors.value.password &&
+    !errors.value.confirmPassword &&
     !errors.value.resident &&
     !errors.value.gender &&
     !errors.value.reason
@@ -132,6 +147,7 @@ const clearForm = () => {
   formData.value = {
     username: '',
     password: '',
+    confirmPassword: '',
     isAustralian: false,
     reason: '',
     gender: ''
@@ -140,6 +156,7 @@ const clearForm = () => {
   errors.value = {
     username: null,
     password: null,
+    confirmPassword: null,
     resident: null,
     gender: null,
     reason: null
@@ -213,35 +230,31 @@ const clearForm = () => {
 
           </div>
 
-          <!-- Australian Resident and Gender -->
+          <!-- Confirm Password and Gender -->
           <div class="row mb-3">
 
             <div class="col-md-6">
+              <label
+                for="confirm-password"
+                class="form-label"
+              >
+                Confirm Password
+              </label>
 
-              <div class="form-check">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="isAustralian"
-                  v-model="formData.isAustralian"
-                  @change="validateResident"
-                />
-
-                <label
-                  for="isAustralian"
-                  class="form-check-label"
-                >
-                  Australian Resident?
-                </label>
-              </div>
+              <input
+                type="password"
+                class="form-control"
+                id="confirm-password"
+                v-model="formData.confirmPassword"
+                @blur="() => validateConfirmPassword(true)"
+              />
 
               <div
-                v-if="errors.resident"
+                v-if="errors.confirmPassword"
                 class="text-danger"
               >
-                {{ errors.resident }}
+                {{ errors.confirmPassword }}
               </div>
-
             </div>
 
             <div class="col-md-6">
@@ -283,6 +296,35 @@ const clearForm = () => {
                 {{ errors.gender }}
               </div>
 
+            </div>
+
+          </div>
+
+          <!-- Australian Resident -->
+          <div class="mb-3">
+
+            <div class="form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="isAustralian"
+                v-model="formData.isAustralian"
+                @change="validateResident"
+              />
+
+              <label
+                for="isAustralian"
+                class="form-check-label"
+              >
+                Australian Resident?
+              </label>
+            </div>
+
+            <div
+              v-if="errors.resident"
+              class="text-danger"
+            >
+              {{ errors.resident }}
             </div>
 
           </div>
@@ -363,6 +405,11 @@ const clearForm = () => {
           <Column
             field="password"
             header="Password"
+          />
+
+          <Column
+            field="confirmPassword"
+            header="Confirm Password"
           />
 
           <Column header="Australian Resident">

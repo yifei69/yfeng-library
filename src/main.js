@@ -7,8 +7,12 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 import PrimeVue from 'primevue/config'
 
+import router from './router'
+
 const app = createApp(App)
 
 app.use(PrimeVue)
+
+app.use(router)
 
 app.mount('#app')
